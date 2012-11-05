@@ -435,8 +435,6 @@ module ActiveRecord #:nodoc:
           # Gets the next available version for the current record, or 1 for a new record
           def next_version
             return 1 if new_record?
-            puts "s"*100
-            puts versions.inspect
             (versions.maximum(:version) || 0) + 1
           end
 
