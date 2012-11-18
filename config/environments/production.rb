@@ -34,5 +34,5 @@ end
 
 RedmineApp::Application.config.middleware.use ExceptionNotifier,
   :email_prefix => "[Redmine Beta Exception] ",
-  :sender_address => %{"notifier redmine" <#{ENV['EMAIL']}>},
+  :sender_address => %{"notifier redmine" contact@badrit.com},
   :exception_recipients => %w{mahmoud.khaled@badrit.com }
