@@ -1,0 +1,107 @@
+ExceptionLogger
+===============
+
+The Exception Logger (forgive the horrible name) logs your Rails exceptions in the database and provides a funky web interface to manage them.
+
+First you need to generate the migration:
+
+  ./script/generate exception_migration
+
+Next, you'll need to include the ExceptionLoggable module into ApplicationController.  Once that's done you might want to modify key methods to customize the logging:
+
+  render_404(exception) - Shows the 404 template.
+  
+  render_500(exception) - Shows the 500 template.
+  
+  log_exception(exception) - Logs the actual exception in the database.
+  
+  rescue_action_in_public(exception) - Does not log these exceptions: ActiveRecord::RecordNotFound, ActionController::UnknownController, ActionController::UnknownAction
+
+Now add a new route to your routes.rb:
+
+ map.connect "logged_exceptions/:action/:id", :controller => "logged_exceptions"
+
+If you want the RSS Feed mapping, add this right after:
+
+  map.connect "logged_exceptions/:action.:format", :controller => "logged_exceptions"
+
+After that, visit /logged_exceptions in your application to manage the exceptions.
+
+Email notify config:
+LoggedExceptionsMailer.mailer_config.update( {
+  :subject     => 'Exception',
+  :recipients  => "me@gmail.com",
+  :from        => 'system@domain.com',
+  :link        => 'http://domain.com',
+  :deliver     => true # dispatching on
+})
+
+It's understandable that you may want to require authentication. You can do this by creating your own controller extending your ApplicationController (thereby leveraging all the existing authorization rules you may have) and include the ExceptionLoggableControllerMixin module. For example:
+
+  class LoggedExceptionsController < ApplicationController
+    include ExceptionLoggableControllerMixin
+    self.application_name = "My Application Name"  # this will show up in the title of the Rss feed
+
+    # add your regular permission checking here, e.g.:
+    protected
+      # only allow admins
+      # this obviously depends on how your auth system works
+      def authorized?
+        current_user.is_a?(Admin)
+      end
+      
+      # assume app's login required doesn't use http basic
+      def login_required_with_basic
+        respond_to do |accepts|
+          # alias_method_chain will alias the app's login_required to login_required_without_basic
+          accepts.html { login_required_without_basic }
+          
+          # access_denied_with_basic_auth is defined in ExceptionLoggableControllerMixin
+          # get_auth_data returns back the user/password pair
+          accepts.rss do
+            access_denied_with_basic_auth unless self.current_user = User.authenticate(*get_auth_data)
+          end
+        end
+      end
+      
+      alias_method_chain :login_required, :basic
+  end
+
+The exact code of course depends on the specific needs of your application.
+
+You can use ActionController::Base.filter_parameter_logging in the LoggedExceptionsController.
+In the code given above, do something like
+
+  LoggedExceptionsController.class_eval do
+    filter_parameter_logging :password
+  end
+
+When viewing a logged exception, parameters whose name has "password" as a substring
+will show their values as "[FILTERED]". There is a link to toggle this filtering, in
+case you really must have a look.
+
+Note that GET parameters will still be shown unfiltered within the logged URL.
+
+Catching exceptions from rake tasks:
+desc ''
+task :bar => :environment do |rake_task|
+  begin
+    raise Exception, ''
+  rescue Exception => e
+    LoggedExceptionRake.save_exception e, rake_task, ENV
+  end
+end
+
+CREDITS
+
+Jamis Buck  - original exception_notification plugin
+Rick Olson  - model/controller code
+Josh Goebel - design
+
+UPDATES
+
+Chris Wanstrath - use will_paginate
+Henrik Nyh (DanceJam) - log exceptions in dev, linkable exceptions, parameter filtering etc
+Zhurbiy Oleg (Ol.keene) - exception notify by email, exceptions catching from rake tasks, will_paginate fix
+David Rubin - Merged in different peoples branches. Fixed minor bugs and cleaned up the code.
+Jason Knight - Pagination support, built on/inspired by Ryanb's willpaginate support.

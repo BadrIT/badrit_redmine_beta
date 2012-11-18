@@ -1,0 +1,154 @@
+= Exception Logger for Rails3
+
+You liked the exception logger from http://github.com/defunkt/exception_logger for Rails2?
+
+You want to have the same functionallity using Rails3?
+
+You want to upgrade your Rails2 application and the old plugin breaks?
+
+You ...
+
+Then just use the exception_logger gem instead and tell your friends to do the same ;)
+
+== Hosted on RubyGems.org
+
+This gem is hosted on RubyGems.org: http://rubygems.org/gems/exception_logger
+
+== Install
+
+Inside your Gemfile:
+
+  gem "exception_logger", :require => "exception_logger"
+
+and then run:
+
+  bundle install
+
+=== Gem Dependencies
+
+Please check if all those requirements are satisfied on your environment.
+
+* i18n >= 0.4.1
+* meta_where >= 0.5.2 # (used to avoid SQL inside the CODE)
+* will_paginate >= 3.0.pre2 # (used for pagination)
+* rails >= 3.0.0
+
+=== Inside your ApplicationController:
+
+  include ExceptionLogger::ExceptionLoggable # loades the module
+  rescue_from Exception, :with => :log_exception_handler # tells rails to forward the 'Exception' (you can change the type) to the handler of the module
+
+== Generators
+
+=== Database Setup
+
+Use
+
+  rails g exception_logger:migration
+
+This will create a database migration
+
+  TIMESTAMP_add_exception_table.rb
+
+inside db/migrations
+
+=== Stylesheet and Javascript
+
+You can copy the stylesheet and javascript to your applications public directory by using
+
+  rails g exception_logger:stylescripts
+
+This allows you to customize those files.
+
+This will be also necessary if you use a webserver ( e.g. passenger+nginx ) in front of rails which does the static file handling for you.
+
+== Routing
+
+The gem is preconfigured to extend your routes automatically. You can access the logged exceptions by pointing to "/logged_exceptions" inside your application.
+
+You can use the rake tasks
+
+  rake routes
+
+to see and check the routes.
+
+== Exception Notification
+
+=== by Email
+
+Rails directly provides a plugin called "Exception Notification" ( http://github.com/rails/exception_notification ).
+
+Just download the plugin and follow the usage instructions from the README file ( http://github.com/rails/exception_notification/blob/master/README ) and add this code to one of your initializer files
+
+  # Example: put this to config/initializers/exception_notification.rb
+  Whatever::Application.config.middleware.use ExceptionNotifier,
+    :email_prefix => "[Whatever] ",
+    :sender_address => %{"notifier" <notifier@example.com>},
+    :exception_recipients => %w{exceptions@example.com}
+
+Restart your server and you are done. (Don't forget to setup your email settings inside your environment files.)
+
+== Authentication
+
+If you want, and believe me you want that, you can add the following lines to your environment to enable Authentication
+
+Example uses the declarative_authorization gem
+
+in config/environment/production.rb:
+
+  config.after_initialize do
+    LoggedExceptionsController.class_eval do
+      # include any custom auth modules you need
+      # (declarative authorization gem used)
+      filter_resource_access
+      # just add any code you want to be included in the controller ;)
+      # optional, sets the application name for the rss feeds
+      self.application_name = "Your Application Name"
+    end
+  end
+
+and (if you use declarative_authorization) add this to your authorization_rules.rb file:
+
+  role :admin do
+    has_permission_on :logged_exceptions, :to => :manage
+    ...
+
+== Upgrading from the old plugin
+
+If you have used the exception_logger plugin for your rails2 application and want to migrate to rails 3 then:
+
+* Remove the old plugin (just delete the vendor/plugins/exception_logger folder)
+* Install the new gem version (see Install)
+* DONE. (if I forgot something, then let me know.)
+
+== Legacy
+
+For more and older details read the README.old File.
+
+== Testing & Development
+
+Testing should always start before the actual development.
+
+You can test this gem very easily. Just run:
+
+  rake test:basic
+
+from the console of the cloned github repository of the exception logger.
+
+This rake task will create a rails app inside the test directory called rails_root and will install the exception logger and migrate the database of that application just in time.
+
+The generator which generates the rails app in your test directory will skip over every existing file, hence if you want to customize a file, then just add/create it.
+
+== Note on Patches/Pull Requests
+ 
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+== Copyright
+
+Copyright (c) 2010 Roland Guem. See LICENSE for details.

@@ -30,3 +30,9 @@ RedmineApp::Application.configure do
 
   config.active_support.deprecation = :log
 end
+
+
+RedmineApp::Application.config.middleware.use ExceptionNotifier,
+  :email_prefix => "[Redmine Beta Exception] ",
+  :sender_address => %{"notifier redmine" <#{ENV['EMAIL']}>},
+  :exception_recipients => %w{mahmoud.khaled@badrit.com }

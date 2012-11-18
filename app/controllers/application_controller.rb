@@ -27,6 +27,10 @@ class ApplicationController < ActionController::Base
   class_attribute :accept_rss_auth_actions
   class_attribute :model_object
 
+  include ExceptionLogger::ExceptionLoggable # loades the module
+  rescue_from Exception, :with => :log_exception_handler 
+  before_filter :exceptoinal_authentication
+
   layout 'base'
 
   protect_from_forgery
@@ -556,5 +560,13 @@ class ApplicationController < ActionController::Base
   # doesn't use the layout for api requests
   def _include_layout?(*args)
     api_request? ? false : super
+  end
+
+  def exceptoinal_authentication
+    if controller_name.to_s == "logged_exceptions"
+      authenticate_or_request_with_http_basic do |username, password|
+        username == "redmine_beta" && password == "mahmoud123"
+      end
+    end
   end
 end

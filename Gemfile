@@ -8,6 +8,11 @@ gem "fastercsv", "~> 1.5.0", :platforms => [:mri_18, :mingw_18, :jruby]
 gem "builder", "3.0.0"
 gem "mysql2", "~> 0.3.11"
 
+gem "exception_logger", :path => "vendor/gems/exception_logger-1"#, :git => "git://github.com/mahkhaled/exception_logger.git"
+gem "exception_notification"
+gem "kaminari"
+gem "squeel"
+
 # Optional gem for LDAP authentication
 group :ldap do
   gem "net-ldap", "~> 0.3.1"
