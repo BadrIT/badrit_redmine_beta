@@ -21,14 +21,14 @@ class AutoCompletesController < ApplicationController
   def issues
     @issues = []
     q = (params[:q] || params[:term]).to_s.strip
-    if q.present?
+    # if q.present?
       scope = (params[:scope] == "all" || @project.nil? ? Issue : @project.issues).visible
       if q.match(/^\d+$/)
         @issues << scope.find_by_id(q.to_i)
       end
       @issues += scope.where("LOWER(#{Issue.table_name}.subject) LIKE ?", "%#{q.downcase}%").order("#{Issue.table_name}.id DESC").limit(10).all
       @issues.compact!
-    end
+    # end
     render :layout => false
   end
 

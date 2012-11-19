@@ -564,9 +564,7 @@ class ApplicationController < ActionController::Base
 
   def exceptoinal_authentication
     if controller_name.to_s == "logged_exceptions"
-      authenticate_or_request_with_http_basic do |username, password|
-        username == "redmine_beta" && password == "mahmoud123"
-      end
+      require_admin
     end
   end
 end
