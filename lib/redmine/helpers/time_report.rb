@@ -45,6 +45,12 @@ module Redmine
       def run
         unless @criteria.empty?
           scope = TimeEntry.visible.spent_between(@from, @to)
+          
+          user = User.current
+          unless user.admin? 
+            scope = scope.where('user_id = ?', user.id)
+          end
+
           if @issue
             scope = scope.on_issue(@issue)
           elsif @project
