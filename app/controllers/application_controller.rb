@@ -461,8 +461,9 @@ class ApplicationController < ActionController::Base
     limit = options[:limit].to_i
     if limit < 1
       limit = 25
-    elsif limit > 100
-      limit = 100
+    # comment this for time tracker
+    # elsif limit > 100
+      # limit = 100
     end
     if offset.nil? && options[:page].present?
       offset = (options[:page].to_i - 1) * limit
