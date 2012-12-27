@@ -3,7 +3,6 @@ class BadritMigration < ActiveRecord::Migration
     add_column :issues, :fixed_version_id, :integer
     add_column :issues, :assigned_to_id, :integer
     add_index "issues", ["assigned_to_id"], :name => "index_issues_on_assigned_to_id"
-    add_index "issues", ["fixed_version_id"], :name => "index_issues_on_fixed_version_id"
     add_index "versions", ["project_id"], :name => "versions_project_id"
     add_index "versions", ["sharing"], :name => "index_versions_on_sharing"
 
