@@ -2,6 +2,27 @@ desc 'BadrIT migration script'
 
 namespace :redmine do
   task :badrit_migrate => :environment do
+    billable_issue_cf = IssueCustomField.find_or_initialize_by_name('Billable')
+    billable_issue_cf.update_attributes(
+                              :field_format     => 'bool',
+                              :is_required    => false,
+                              :is_for_all     => true,
+                              :is_filter  => true,
+                              :default_value => '1')
+    
+    billable_issue_cf.trackers = Tracker.all
+    billable_issue_cf.save
+
+
+    billable_time_cf = TimeEntryCustomField.find_or_initialize_by_name('Billable')
+    billable_time_cf.update_attributes(
+      :field_format     => 'bool',
+      :is_required    => false,
+      :default_value => '1'
+      )
+
+    puts "cloning issues for different user"
+
     ii=Issue.find_by_sql('select issue_id as id, user_id as assigned_to_id from issues_users')
     grouped_issues = ii.group_by(&:id)
     
@@ -46,6 +67,12 @@ namespace :redmine do
       issue.custom_field_values = {billable_issue_cf_id => issue.billable}
       issue.save
     end
+
+    puts "Updating custom field time entry"
+    billable_entry_cf_id = TimeEntryCustomField.find_by_name('Billable').id
+    ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'TimeEntry', time_entries.id, #{billable_entry_cf_id}, '1' from time_entries where issue_id in (SELECT id FROM issues where billable = 1))")
+
+    ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'TimeEntry', time_entries.id, #{billable_entry_cf_id}, '0' from time_entries where issue_id in (SELECT id FROM issues where billable = 0))")
 
   end
 end
