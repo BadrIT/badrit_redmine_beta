@@ -61,14 +61,14 @@ namespace :redmine do
     Issue.all.each{|i| i.update_actual_hours}
 
 
-    puts "Updating billable issue"
-    billable_issue_cf_id = IssueCustomField.find_by_name('Billable').id
-    Issue.all.each do |issue|
-      issue.custom_field_values = {billable_issue_cf_id => issue.billable}
-      issue.save
-    end
+    puts "Updating billable custom field issue"
+    billable_entry_cf_id = IssueCustomField.find_by_name('Billable').id
+    ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'Issue', issues.id, #{billable_entry_cf_id}, '1' from issues where billable = 1)")
 
-    puts "Updating custom field time entry"
+    ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'Issue', issues.id, #{billable_entry_cf_id}, '0' from issues where billable = 0)")
+
+
+    puts "Updating billable custom field time entry"
     billable_entry_cf_id = TimeEntryCustomField.find_by_name('Billable').id
     ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'TimeEntry', time_entries.id, #{billable_entry_cf_id}, '1' from time_entries where issue_id in (SELECT id FROM issues where billable = 1))")
 
