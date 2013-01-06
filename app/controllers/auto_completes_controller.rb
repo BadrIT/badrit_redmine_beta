@@ -23,6 +23,11 @@ class AutoCompletesController < ApplicationController
     q = (params[:q] || params[:term]).to_s.strip
     # if q.present?
       scope = (params[:scope] == "all" || @project.nil? ? Issue : @project.issues).visible
+      
+      if User.current
+        scope = scope.where('assigned_to_id =?', User.current)
+      end
+
       if q.match(/^\d+$/)
         @issues << scope.find_by_id(q.to_i)
       end

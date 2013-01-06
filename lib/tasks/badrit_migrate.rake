@@ -63,6 +63,7 @@ namespace :redmine do
 
     puts "Updating billable custom field issue"
     billable_entry_cf_id = IssueCustomField.find_by_name('Billable').id
+    ActiveRecord::Base.connection.execute("delete from custom_values where custom_field_id = #{billable_entry_cf_id}")
     ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'Issue', issues.id, #{billable_entry_cf_id}, '1' from issues where billable = 1)")
 
     ActiveRecord::Base.connection.execute("insert into custom_values  (customized_type, customized_id, custom_field_id, value)    (select 'Issue', issues.id, #{billable_entry_cf_id}, '0' from issues where billable = 0)")
