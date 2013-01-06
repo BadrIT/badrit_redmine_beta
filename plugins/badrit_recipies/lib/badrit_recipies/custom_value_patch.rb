@@ -6,7 +6,7 @@ module BadritRecipies
         unloadable # Send unloadable so it will not be unloaded in development
 
         include InstanceMethods
-        after_update :update_time_entry_billable
+        # after_update :update_time_entry_billable
         before_create :set_time_entry_billable_from_issue
 
       end 
@@ -18,7 +18,7 @@ module BadritRecipies
     protected
     # when change issue to billable change all entries to billable and vice versa
     def update_time_entry_billable
-      if self.customized_type == 'Issue' && self.custom_field.name == 'Billable'
+      if self.customized_type == 'Issue' && self.custom_field.name == 'Billable' && self.value_changed?
         billable_time_cf_id = TimeEntryCustomField.find_or_initialize_by_name('Billable')
 
         # update all time entries to issue billable value
