@@ -7,6 +7,7 @@ gem "coderay", "~> 1.0.6"
 gem "fastercsv", "~> 1.5.0", :platforms => [:mri_18, :mingw_18, :jruby]
 gem "builder", "3.0.0"
 gem "mysql2", "~> 0.3.11"
+gem 'newrelic_rpm'
 
 gem "exception_logger", :path => "vendor/gems/exception_logger-1"#, :git => "git://github.com/mahkhaled/exception_logger.git"
 gem "exception_notification"
