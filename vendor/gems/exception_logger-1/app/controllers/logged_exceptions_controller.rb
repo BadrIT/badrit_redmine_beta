@@ -1,5 +1,8 @@
 class LoggedExceptionsController < ApplicationController
 
+  before_filter :authorize
+  before_filter :require_admin
+  
   cattr_accessor :application_name
 
   #ApplicationController.class_eval do
