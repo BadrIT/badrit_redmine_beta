@@ -50,11 +50,14 @@ class TimelogController < ApplicationController
 
     scope = TimeEntry.visible.spent_between(@from, @to)
 
-    user = User.current
-    user = User.find(params[:user_id]) if user.admin && params[:user_id]
+    if params[:myself]
+      @user = User.current
+    elsif User.current.admin && params[:user_id]
+      @user = User.find(params[:user_id])
+    end
 
-    if !user.admin? || params[:myself]
-      scope = scope.where('user_id = ?', user.id)
+    if @user
+      scope = scope.where('user_id = ?', @user.id)
     end
 
     if @issue
