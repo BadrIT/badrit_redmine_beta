@@ -54,6 +54,8 @@ class TimelogController < ApplicationController
       @user = User.current
     elsif User.current.admin && params[:user_id]
       @user = User.find(params[:user_id])
+    elsif !User.current.admin
+      @user = User.current
     end
 
     if @user
