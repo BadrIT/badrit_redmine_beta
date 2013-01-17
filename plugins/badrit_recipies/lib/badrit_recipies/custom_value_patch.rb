@@ -7,7 +7,10 @@ module BadritRecipies
 
         include InstanceMethods
         # after_update :update_time_entry_billable
-        before_create :set_time_entry_billable_from_issue
+
+        # before_create won't work because acts_as_customizable
+        # will reset it to the value entered from form inputs
+        after_save :set_time_entry_billable_from_issue
 
       end 
       
@@ -38,7 +41,11 @@ module BadritRecipies
         issue = self.customized.issue
         issue_value = issue.custom_values.find_by_custom_field_id(issue_billable_cf_id)
 
-        self.value = issue_value.value if issue_value
+        if issue_value && self.value != issue_value.value 
+          # update_column inorder not to call callbacks again
+          # update attribute won't work :(
+          self.update_column(:value, issue_value.value )
+        end
       end
     end
 

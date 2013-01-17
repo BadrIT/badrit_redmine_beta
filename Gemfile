@@ -13,6 +13,7 @@ gem "exception_logger", :path => "vendor/gems/exception_logger-1"#, :git => "git
 gem "exception_notification"
 gem "kaminari"
 gem "squeel"
+gem 'rack-mini-profiler'
 
 # Optional gem for LDAP authentication
 group :ldap do
