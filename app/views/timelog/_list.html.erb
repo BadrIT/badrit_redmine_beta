@@ -24,7 +24,8 @@
 <% entries.each do |entry| -%>
 <tr class="time-entry <%= cycle("odd", "even") %> hascontextmenu">
 <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", entry.id, false, :id => nil) %></td>
-<td class="spent_on"><%= format_date(entry.spent_on) %></td>
+<% entry_details = "#{entry.spent_from.strftime('%H:%M')}-#{entry.spent_to.strftime('%H:%M')}" %>
+<td class="spent_on"><%= format_date(entry.spent_on) %><%= "[#{entry_details}]" %></td>
 <td class="user"><%= link_to_user(entry.user) %></td>
 <td class="activity"><%=h entry.activity %></td>
 <td class="project"><%= link_to_project(entry.project) %></td>
