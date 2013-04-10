@@ -47,7 +47,7 @@ module Redmine
           scope = TimeEntry.visible.spent_between(@from, @to)
           
           user = User.current
-          unless user.admin? 
+          if !user.admin? && (@project.nil? || !user.roles_for_project(@project).find{|r| r.name == 'Manager'})
             scope = scope.where('user_id = ?', user.id)
           end
 
