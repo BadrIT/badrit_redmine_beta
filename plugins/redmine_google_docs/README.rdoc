@@ -1,7 +1,3 @@
-= The official Redmine Google Docs plugin has moved to Evolving Web's GitHub account.  Please fork and clone from that repository instead.
-
-Link: https://github.com/evolvingweb/redmine_google_docs
-
 = Redmine Google Docs Plugin
 
 This is a plugin for Redmine that allows you to embed Google Spreadsheets and Docs into redmine pages. This is useful for keeping Google Docs-based documentation up-to-date with the issue queue. 
@@ -12,53 +8,9 @@ For more information, see our blog post on this module: http://evolvingweb.ca/st
 
 == Installation
 
-1. Extract/clone to the vendor/plugins folder of your Redmine installation.
+1. Extract/clone to the plugins folder of your Redmine installation.
 2. Enjoy
+3. Adds support for Redmine 2.2.1 and Rails 3 
 
-The development of this module was sponsored by Evolving Web.
 
-= Usage
-
-== Embed a spreadsheet, filtering by a query
-
-    {{googlespreadsheet(key, query)}}
-
-Where `key` is the document key (from the URI) and `query` is the (optional) SQL-like query to filter with.
-
-You can also specify a sheet with an optional third parameter.
-
-    {{googlespreadsheet(key, query, sheet)}}
-
-== Embed just the row containing the current issue's ID in the second column
-
-Given a spreadsheet like this:
-
-    Source  | Issue ID  |  Description
-    --------+-----------+-----------------------------------------
-    Client  | 5678      | Change the colour of the banner to blue
-    QA Team | 6674      | Error message on search page
-    ...
-
-We can add the following macro to Issue 5678's description field:
-
-    {{googleissue(key)}}
-
-where `key` is the document key of the Google spreadsheet (from the URI).
-
-For example:
-
-    {{googleissue(adfSDFiuhDSF98SDFhiushdafbhIDFXF0dsf)}}
-
-== Embed a Google Doc (for Word-like documents)
-
-To embed an document in read-write mode:
-
-    {{googledoc(key, edit)}}
-
-To embed a document in read-only mode:
-
-    {{googledoc(key)}}
-
-== Embed a Native Google Spreadsheet (uses an iframe)
-
-   {{googlessn(key)}}
+This is a clone of https://github.com/evolvingweb/redmine_google_docs

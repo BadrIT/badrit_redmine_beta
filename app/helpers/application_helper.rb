@@ -529,8 +529,12 @@ module ApplicationHelper
 
     text = text.dup
     macros = catch_macros(text)
+    puts "i"*20
+    puts macros.inspect
     text = Redmine::WikiFormatting.to_html(Setting.text_formatting, text, :object => obj, :attribute => attr)
 
+puts "x"*20
+puts text
     @parsed_headings = []
     @heading_anchors = {}
     @current_section = 0 if options[:edit_section_links]
